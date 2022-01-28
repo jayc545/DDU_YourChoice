@@ -26,7 +26,7 @@ public class TittleHeader : MonoBehaviour
         if (isRevealing)
             StopCoroutine(revealing);
 
-        revealing = StartCoroutine(Revealing());
+       // revealing = StartCoroutine(Revealing());
     }
 
     public void Hide()
@@ -42,7 +42,7 @@ public class TittleHeader : MonoBehaviour
 
     public bool isRevealing { get { return revealing != null; } }
     Coroutine revealing = null;
-    IEnumerator Revealing()
+    /*IEnumerator Revealing()
     {
         banner.enabled = true;
         titleText.enabled = true;
@@ -60,5 +60,6 @@ public class TittleHeader : MonoBehaviour
                 break;
         }
     }
+    */
     
 }
