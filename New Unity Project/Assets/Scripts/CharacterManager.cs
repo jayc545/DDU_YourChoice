@@ -23,7 +23,7 @@ public class CharacterManager : MonoBehaviour
     }
 
     // try to get a character by name provided from the character List.
-    public Character GetCharacter(string characterName, bool createCharacterIfDoesNotExist = true)
+    public Character GetCharacter(string characterName, bool createCharacterIfDoesNotExist = true, bool enableCreatedCharacterOnStart = true)
     {
         int index = -1;
         if (characterDictionary.TryGetValue (characterName, out index))
@@ -32,14 +32,14 @@ public class CharacterManager : MonoBehaviour
         }
         else if (createCharacterIfDoesNotExist)
         {
-            return CreateCharacter(characterName);
+            return CreateCharacter(characterName, enableCreatedCharacterOnStart);
         }
         return null;
     }
 
-    public Character CreateCharacter(string characterName)
+    public Character CreateCharacter(string characterName, bool enableOnStart = true)
     {
-        Character newCharacter = new Character(characterName);
+        Character newCharacter = new Character(characterName, enableOnStart);
 
         characterDictionary.Add(characterName, characters.Count);
         characters.Add(newCharacter);
