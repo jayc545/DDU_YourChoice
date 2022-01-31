@@ -26,7 +26,11 @@ public class TittleHeader : MonoBehaviour
         if (isRevealing)
             StopCoroutine(revealing);
 
+<<<<<<< HEAD
      //   revealing = StartCoroutine(Revealing());
+=======
+       // revealing = StartCoroutine(Revealing());
+>>>>>>> 2a290b7ba6a3ef554aed69fb5ea30076ead7001a
     }
 
     public void Hide()
@@ -42,9 +46,13 @@ public class TittleHeader : MonoBehaviour
 
     public bool isRevealing { get { return revealing != null; } }
     Coroutine revealing = null;
+<<<<<<< HEAD
     
     /*
     IEnumerator Revealing()
+=======
+    /*IEnumerator Revealing()
+>>>>>>> 2a290b7ba6a3ef554aed69fb5ea30076ead7001a
     {
         banner.enabled = true;
         titleText.enabled = true;
@@ -61,5 +69,10 @@ public class TittleHeader : MonoBehaviour
                 break;
         }
     }
+<<<<<<< HEAD
  */   
+=======
+    */
+    
+>>>>>>> 2a290b7ba6a3ef554aed69fb5ea30076ead7001a
 }
