@@ -15,11 +15,6 @@ public class DialogueSystem : MonoBehaviour
         instance = this; //
     }
 
-    internal void Say(string speech, string characterName)
-    {
-        throw new NotImplementedException();
-    }
-
     // Start is called before the first frame update
     void Start()
     {
@@ -27,11 +22,22 @@ public class DialogueSystem : MonoBehaviour
     }
 
     //Saying somethin from the speaker box.
-    public void Say(string speech, bool additive, string speaker = "")
+    public void Say(string speech, string speaker = "")
     {
         StopSpeaking();
-        speaking = StartCoroutine(Speaking(speech,additive, speaker));
+
+        StartCoroutine(Speaking(speech, false, speaker));
     }
+
+    public void SayAdd(string speech, string speaker = "")
+    {
+        StopSpeaking();
+
+        speechText.text = targetSpeech;
+
+        StartCoroutine(Speaking(speech, true, speaker));
+    }
+
 
 
     public void StopSpeaking()
@@ -44,15 +50,14 @@ public class DialogueSystem : MonoBehaviour
     }
     public bool isSpeaking { get { return speaking != null; } }
     [HideInInspector] public bool isWaitingForUserInput = false;
-
-
+     
     string targetSpeech = "";
     Coroutine speaking = null;
 
-    IEnumerator Speaking(string Speech, bool additive, string speaker = "")
+    IEnumerator Speaking(string speech, bool additive, string speaker = "")
     {
         speechPanal.SetActive(true);
-        targetSpeech = Speech;
+        targetSpeech = speech;
 
         if (!additive)
             speechText.text = "";

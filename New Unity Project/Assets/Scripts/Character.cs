@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class Character
 {
     public string characterName;
-
+    // Root container for all the images related to the character in the scenne.
     [HideInInspector] public RectTransform root;
 
     DialogueSystem dialogue;
@@ -33,16 +33,12 @@ public class Character
         dialogue = DialogueSystem.instance;
     }
 
-     
-
-    [System.Serializable]
-    public class Renderers
+    
+    class Renderers
     {
                //Sprites used images.
         public Image bodyRenderer1;
         public Image bodyRenderer2;
         public Image Head;
     }
-
-    Renderers renderers = new Renderers();
 }

@@ -28,13 +28,12 @@ public class CharacterManager : MonoBehaviour
         int index = -1;
         if (characterDictionary.TryGetValue (characterName, out index))
         {
-            return characters[index];
+            return characters [index];
         }
         else if (createCharacterIfDoesNotExist)
         {
             return CreateCharacter(characterName);
         }
-
         return null;
     }
 

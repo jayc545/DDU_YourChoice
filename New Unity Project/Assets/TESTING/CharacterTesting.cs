@@ -9,7 +9,7 @@ public class CharacterTesting : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        newOC = CharacterManager.instance.GetCharacter("girl");
+        newOC = CharacterManager.instance.GetCharacter ("girl");
     }
 
     public string[] speech;

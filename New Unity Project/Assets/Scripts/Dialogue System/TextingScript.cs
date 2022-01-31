@@ -41,7 +41,5 @@ public class TextingScript : MonoBehaviour
         string[] parts = s.Split(':');
         string speech = parts[0];
         string speaker = (parts.Length >= 2) ? parts[1] : "";
-
-        dialogue.Say(speech, true, speaker);
     }
 }
