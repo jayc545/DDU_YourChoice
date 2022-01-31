@@ -88,7 +88,7 @@ public class DialogueSystem : MonoBehaviour
     public void Close()
     {
         StopSpeaking();
-        speechPanal.SetActive(false);
+        speechPanal.SetActive (false);
     }
 
 
