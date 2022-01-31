@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,8 +12,14 @@ public class DialogueSystem : MonoBehaviour
 
     void Awake()
     {
-        instance = this;
+        instance = this; //
     }
+
+    internal void Say(string speech, string characterName)
+    {
+        throw new NotImplementedException();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -20,10 +27,10 @@ public class DialogueSystem : MonoBehaviour
     }
 
     //Saying somethin from the speaker box.
-    public void Say(string speech, string speaker = "")
+    public void Say(string speech, bool additive, string speaker = "")
     {
         StopSpeaking();
-        speaking = StartCoroutine(Speaking(speech, speaker));
+        speaking = StartCoroutine(Speaking(speech,additive, speaker));
     }
 
 
@@ -38,11 +45,18 @@ public class DialogueSystem : MonoBehaviour
     public bool isSpeaking { get { return speaking != null; } }
     [HideInInspector] public bool isWaitingForUserInput = false;
 
+
+    string targetSpeech = "";
     Coroutine speaking = null;
 
-    IEnumerator Speaking(string targetSpeech, string speaker = "")
+    IEnumerator Speaking(string Speech, bool additive, string speaker = "")
     {
         speechPanal.SetActive(true);
+        targetSpeech = Speech;
+
+        if (!additive)
+            speechText.text = "";
+        else targetSpeech = speechText.text + targetSpeech;
         speechText.text = "";
         SpeakerNameText.text = DetermineSpeaker(speaker);
         isWaitingForUserInput = false;
@@ -64,10 +78,20 @@ public class DialogueSystem : MonoBehaviour
     {
         string retVal = SpeakerNameText.text;
         if (s != SpeakerNameText.text && s !="")
-            retVal = (s.ToLower().Contains("narrator")) ? "narrator" : s;
+            retVal = (s.ToLower().Contains("narrator")) ? "" : s;
 
         return retVal;
     }
+
+
+    // Closes the Dialogue
+    public void Close()
+    {
+        StopSpeaking();
+        speechPanal.SetActive(false);
+    }
+
+
 
 
     [System.Serializable]

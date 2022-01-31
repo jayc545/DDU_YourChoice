@@ -13,9 +13,9 @@ public class TextingScript : MonoBehaviour
 
     public string[] s = new string[]
     {
-        "hi, how are you?:Women from Tinder",
-        "The weather is amazing today!",
-        "Want would you like to do?"
+        "I....: Stranger",
+        "Want to tell you something",
+
     };
 
     int index = 0;  
@@ -42,6 +42,6 @@ public class TextingScript : MonoBehaviour
         string speech = parts[0];
         string speaker = (parts.Length >= 2) ? parts[1] : "";
 
-        dialogue.Say(speech, speaker);
+        dialogue.Say(speech, true, speaker);
     }
 }

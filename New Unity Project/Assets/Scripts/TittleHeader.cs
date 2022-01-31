@@ -26,7 +26,7 @@ public class TittleHeader : MonoBehaviour
         if (isRevealing)
             StopCoroutine(revealing);
 
-        revealing = StartCoroutine(Revealing());
+     //   revealing = StartCoroutine(Revealing());
     }
 
     public void Hide()
@@ -42,17 +42,18 @@ public class TittleHeader : MonoBehaviour
 
     public bool isRevealing { get { return revealing != null; } }
     Coroutine revealing = null;
+    
+    /*
     IEnumerator Revealing()
     {
         banner.enabled = true;
         titleText.enabled = true;
 
-        //Different metheds for revealing the text.
         switch (displayMethod)
         {
             case DISPLAY_METHOD.instant:                //Instantly be assigmented and visible
-             //   banner.color = GlobalF.SetAlpha(banner.color, 1);
-
+                banner.color = GlobalF.SetAlpha(banner.color, 1);
+                titleText.color =
                 break;
             case DISPLAY_METHOD.slowfade:
                 break;
@@ -60,5 +61,5 @@ public class TittleHeader : MonoBehaviour
                 break;
         }
     }
-    
+ */   
 }
