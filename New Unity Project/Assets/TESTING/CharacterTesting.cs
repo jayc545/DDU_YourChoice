@@ -22,6 +22,10 @@ public class CharacterTesting : MonoBehaviour
     // Expression
     public int  expressionIndex, bodyIndex = 0;
 
+    public float speed = 5f;
+    public bool smoothtransitions = false;
+
+
 
     // Update is called once per frame
     void Update()
@@ -56,13 +60,19 @@ public class CharacterTesting : MonoBehaviour
         // Moving test
         if (Input.GetKey(KeyCode.B))
         {
-            girl.SetBody(bodyIndex);
+            if (Input.GetKey(KeyCode.T))
+                girl.TransitionBody(girl.GetSprite(bodyIndex), speed, smoothtransitions);
+            else
+                girl.SetBody(bodyIndex);
         }
 
         // Imitiate movement
         if (Input.GetKeyDown(KeyCode.E))
         {
-            girl.SetExpression(expressionIndex);
+            if (Input.GetKey(KeyCode.T))
+                girl.TransitionExpression(girl.GetSprite(expressionIndex), speed, smoothtransitions);
+            else
+                girl.SetExpression(expressionIndex);
         }
 
 

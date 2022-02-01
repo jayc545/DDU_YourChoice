@@ -50,7 +50,7 @@ public class CharacterManager : MonoBehaviour
         return newCharacter;
     }
 
-    /*
+    
     public class CHARACTERPOSITIONS
     {
         public Vector2 bottomLeft = new Vector2(0, 0);
@@ -59,5 +59,16 @@ public class CharacterManager : MonoBehaviour
         public Vector2 bottemRight = new Vector2(1f, 0);
         public Vector2 topLeft = new Vector2(0, 1f);
     }
-    */
+
+    public static CHARACTERPOSITIONS characterpositions = new CHARACTERPOSITIONS();
+    
+    public class CHARACTEREXPRESSIONS
+    {
+        public int normal = 3;
+        public int surprised = 3;
+        public int angry = 3;
+        public int flustered = 3;
+    }
+
+    public static CHARACTEREXPRESSIONS characterexpressions = new CHARACTEREXPRESSIONS();
 }

@@ -145,6 +145,104 @@ public class Character
         renderers.expressionRenderer.sprite = sprite;
     }
 
+	//Transition Body
+	bool isTransitioningBody {get{ return transitioningBody != null;}}
+	Coroutine transitioningBody = null;
+
+	public void TransitionBody(Sprite sprite, float speed, bool smooth)
+	{
+		if (renderers.bodyRenderer.sprite == sprite)
+			return;
+		
+		StopTransitioningBody ();
+		transitioningBody = CharacterManager.instance.StartCoroutine (TransitioningBody (sprite, speed, smooth));
+	}
+
+	void StopTransitioningBody()
+	{
+		if (isTransitioningBody)
+			CharacterManager.instance.StopCoroutine (transitioningBody);
+		transitioningBody = null;
+	}
+
+	public IEnumerator TransitioningBody(Sprite sprite, float speed, bool smooth)
+	{
+		for (int i = 0; i < renderers.allBodyRenderers.Count; i++) 
+		{
+			Image image = renderers.allBodyRenderers [i];
+			if (image.sprite == sprite) 
+			{
+				renderers.bodyRenderer = image;
+				break;
+			}
+		}
+
+		if (renderers.bodyRenderer.sprite != sprite) 
+		{
+			Image image = GameObject.Instantiate (renderers.bodyRenderer.gameObject, renderers.bodyRenderer.transform.parent).GetComponent<Image> ();
+			renderers.allBodyRenderers.Add (image);
+			renderers.bodyRenderer = image;
+			image.color = GlobalF.SetAlpha (image.color, 0f);
+			image.sprite = sprite;
+		}
+
+		while (GlobalF.TransitionImages (ref renderers.bodyRenderer, ref renderers.allBodyRenderers, speed, smooth))
+			yield return new WaitForEndOfFrame ();
+
+		Debug.Log ("done");
+		StopTransitioningBody ();
+	}
+
+	//Transition Expression
+	bool isTransitioningExpression {get{ return transitioningExpression != null;}}
+	Coroutine transitioningExpression = null;
+
+	public void TransitionExpression(Sprite sprite, float speed, bool smooth)
+	{
+		if (renderers.expressionRenderer.sprite == sprite)
+			return;
+
+		StopTransitioningExpression ();
+		transitioningExpression = CharacterManager.instance.StartCoroutine (TransitioningExpression (sprite, speed, smooth));
+	}
+
+	void StopTransitioningExpression()
+	{
+		if (isTransitioningExpression)
+			CharacterManager.instance.StopCoroutine (transitioningExpression);
+		transitioningExpression = null;
+	}
+
+	public IEnumerator TransitioningExpression(Sprite sprite, float speed, bool smooth)
+	{
+		for (int i = 0; i < renderers.allExpressionRenderers.Count; i++) 
+		{
+			Image image = renderers.allExpressionRenderers [i];
+			if (image.sprite == sprite) 
+			{
+				renderers.expressionRenderer = image;
+				break;
+			}
+		}
+
+		if (renderers.expressionRenderer.sprite != sprite) 
+		{
+			Image image = GameObject.Instantiate (renderers.expressionRenderer.gameObject, renderers.expressionRenderer.transform.parent).GetComponent<Image> ();
+			renderers.allExpressionRenderers.Add (image);
+			renderers.expressionRenderer = image;
+			image.color = GlobalF.SetAlpha (image.color, 0f);
+			image.sprite = sprite;
+		}
+
+		while (GlobalF.TransitionImages (ref renderers.expressionRenderer, ref renderers.allExpressionRenderers, speed, smooth))
+			yield return new WaitForEndOfFrame ();
+
+		Debug.Log ("done");
+		StopTransitioningExpression ();
+	}
+
+
+
     // End Transitioning images ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //Create a new character
@@ -160,9 +258,10 @@ public class Character
         characterName = _name;
 
 
-            renderers.bodyRenderer = ob.transform.Find("bodyLayer").GetComponent<Image> ();
-            renderers.expressionRenderer = ob.transform.Find("expressionLayer").GetComponent<Image> ();
-
+        renderers.bodyRenderer = ob.transform.Find("BodyLayer").GetComponent<Image> ();
+        renderers.expressionRenderer = ob.transform.Find("ExpressionLayer").GetComponent<Image> ();
+        renderers.allBodyRenderers.Add(renderers.bodyRenderer);
+        renderers.allExpressionRenderers.Add(renderers.expressionRenderer);
 
 
 
@@ -185,6 +284,8 @@ public class Character
         // the expression for the renderer of the multilayer character.
         public Image expressionRenderer;
 
+        public List<Image> allBodyRenderers = new List<Image>();
+        public List<Image> allExpressionRenderers = new List<Image>();
     }
 
     public Renderers renderers = new Renderers();
