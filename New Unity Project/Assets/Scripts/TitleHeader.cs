@@ -14,7 +14,8 @@ public class TitleHeader : MonoBehaviour
     {
         instant,
         slowFade,
-        TypeWriter
+        TypeWriter,
+        floatingSlowfade
     }
     public DISPLAY_METHOD displayMetohed = DISPLAY_METHOD.instant;
     public float fadeSpeed = 1;
@@ -53,14 +54,7 @@ public class TitleHeader : MonoBehaviour
                 titleText.color = GlobalF.SetAlpha(titleText.color, 1);
                     break;
             case DISPLAY_METHOD.slowFade:
-                banner.color = GlobalF.SetAlpha(banner.color, 0);
-                titleText.color = GlobalF.SetAlpha(titleText.color, 0);
-                while(banner.color.a < 1)
-                {
-                    banner.color = GlobalF.SetAlpha(banner.color, Mathf.MoveTowards(banner.color.a, 1, fadeSpeed * Time.unscaledDeltaTime));
-                    titleText.color = GlobalF.SetAlpha(titleText.color, banner.color.a);
-                    yield return new WaitForEndOfFrame();
-                }
+                yield return SlowFade();
                 break;
             case DISPLAY_METHOD.TypeWriter:
                 banner.color = GlobalF.SetAlpha(banner.color, 1);
@@ -70,5 +64,17 @@ public class TitleHeader : MonoBehaviour
         }
 
         revealing = null;
+    }
+
+    IEnumerator SlowFade()
+    {
+        banner.color = GlobalF.SetAlpha(banner.color, 0);
+        titleText.color = GlobalF.SetAlpha(titleText.color, 0);
+        while (banner.color.a < 1)
+        {
+            banner.color = GlobalF.SetAlpha(banner.color, Mathf.MoveTowards(banner.color.a, 1, fadeSpeed * Time.unscaledDeltaTime));
+            titleText.color = GlobalF.SetAlpha(titleText.color, banner.color.a);
+            yield return new WaitForEndOfFrame();
+        }
     }
 }

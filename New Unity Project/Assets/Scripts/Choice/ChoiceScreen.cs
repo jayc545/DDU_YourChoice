@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 using UnityEngine.UI;
+using TMPro;
+
 
 public class ChoiceScreen : MonoBehaviour
 {
@@ -10,49 +11,61 @@ public class ChoiceScreen : MonoBehaviour
 
     public GameObject root;
 
-    //TODO Tittle header.
+    public TitleHeader _header;
 
-    public ChoiveButton choicePrefab;
+    public static TitleHeader header { get { return instance._header; } }
 
-    static List<ChoiveButton> choices = new List<ChoiveButton>();
+    public ChoiceButton choicePrefab;
+
+    static List<ChoiceButton> choices = new List<ChoiceButton>();
 
     public VerticalLayoutGroup layoutGroup;
-
 
     private void Awake()
     {
         instance = this;
+        Hide();
     }
+
     public static void Show(string title, params string[] choices)
     {
         instance.root.SetActive(true);
+
+        if (title != "")
+            header.Show(title);
+        else
+            header.Hide();
 
         if (isShowingChoices)
             instance.StopCoroutine(showingChoices);
 
         ClearAllCurrentChoices();
+
         showingChoices = instance.StartCoroutine(ShowingChoices(choices));
     }
-
     public static void Hide()
     {
         if (isShowingChoices)
             instance.StopCoroutine(showingChoices);
         showingChoices = null;
 
+        header.Hide();
+
         ClearAllCurrentChoices();
+
         instance.root.SetActive(false);
     }
 
     static void ClearAllCurrentChoices()
     {
-        foreach(ChoiveButton b in choices)
+        foreach (ChoiceButton b in choices)
         {
             DestroyImmediate(b.gameObject);
         }
         choices.Clear();
     }
-    public static bool isWaitingForChoicesToBeMade { get { return isShowingChoices && lastChoiceMade.hasBeenMade; } }
+
+    public static bool isWaitingForChoiceToBeMade { get { return isShowingChoices && !lastChoiceMade.hasBeenMade; } }
     public static bool isShowingChoices { get { return showingChoices != null; } }
     static Coroutine showingChoices = null;
     public static IEnumerator ShowingChoices(string[] choices)
@@ -60,32 +73,50 @@ public class ChoiceScreen : MonoBehaviour
         yield return new WaitForEndOfFrame();
         lastChoiceMade.Reset();
 
-        for (int i = 0; i < choices.Length; i++)
+        while (header.isRevealing)
+            yield return new WaitForEndOfFrame();
+
+        for(int i = 0; i < choices.Length; i++)
         {
-            CreateChoices(choices[i]);
+            CreateChoice(choices[i]);
         }
 
-        SetLayoutSpacing();
-
-        while (isWaitingForChoicesToBeMade)
+        while (isWaitingForChoiceToBeMade)
             yield return new WaitForEndOfFrame();
 
         Hide();
     }
-    static void SetLayoutSpacing()
+
+
+    static void SetLayerSpacing()
     {
         int i = choices.Count;
         if (i <= 3)
             instance.layoutGroup.spacing = 20;
-        else if (i <= 7)
+        else if (i >= 7)
             instance.layoutGroup.spacing = 1;
-    }
 
-    static void CreateChoices(string choice)
+        else
+        {
+            switch (i)
+            {
+                case 4:
+                    instance.layoutGroup.spacing = 15;
+                    break;
+                case 5:
+                    instance.layoutGroup.spacing = 10;
+                    break;
+                case 6:
+                    instance.layoutGroup.spacing = 5;
+                    break;
+            }
+        }
+    }
+    static void CreateChoice (string choice)
     {
         GameObject ob = Instantiate(instance.choicePrefab.gameObject, instance.choicePrefab.transform.parent);
         ob.SetActive(true);
-        ChoiveButton b = ob.GetComponent<ChoiveButton>();
+        ChoiceButton b = ob.GetComponent<ChoiceButton>();
 
         b.text = choice;
         b.choiceIndex = choices.Count;
@@ -93,27 +124,47 @@ public class ChoiceScreen : MonoBehaviour
         choices.Add(b);
     }
 
+
     [System.Serializable]
     public class CHOICE
     {
-        public bool hasBeenMade { get { return tittle != "" & index != -1; } }
-
-        public string tittle = "";
+        public bool hasBeenMade { get { return title != "" && index != -1; } }
+        public string title = "";
         public int index = -1;
 
         public void Reset()
         {
-            tittle = "";
+            title = "";
             index = -1;
         }
     }
+
     public CHOICE choice = new CHOICE();
     public static CHOICE lastChoiceMade { get { return instance.choice; } }
 
-    public void MakeChoice (ChoiveButton button)
+    public void MakeChoice (ChoiceButton button)
     {
         choice.index = button.choiceIndex;
-        choice.tittle = button.text;
+        choice.title = button.text;
     }
+
+    public void MakeChoice(string ChoiceTitle)
+    { 
+        foreach(ChoiceButton b in choices)
+        {
+            if(b.text.ToLower() == ChoiceTitle.ToLower())
+            {
+                MakeChoice(b);
+                return;
+            }
+        }
+    }
+
+    public void MakeChoice(int choiceIndex)
+    {
+        if (choices.Count > choiceIndex)
+            MakeChoice(choices[choiceIndex]);
+    }
+
 
 }
