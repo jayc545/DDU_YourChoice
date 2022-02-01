@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class CharacterTesting : MonoBehaviour
 {
-    public Character newOC;
+    public Character girl;
 
     // Start is called before the first frame update
     void Start()
     {
-        newOC = CharacterManager.instance.GetCharacter ("girl", enableCreatedCharacterOnStart: false);
-
+        girl = CharacterManager.instance.GetCharacter ("girl", enableCreatedCharacterOnStart: true);
+        girl.GetSprite(0);
     }
 
     public string[] speech;
@@ -19,24 +19,54 @@ public class CharacterTesting : MonoBehaviour
     public Vector2 moveTarget;
     public float moveSpeed;
     public bool smooth;
+    // Expression
+    public int  expressionIndex, bodyIndex = 0;
 
 
     // Update is called once per frame
     void Update()
     {
+
+        // Her saying something
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (i < speech.Length)
-                newOC.Say(speech[i]);
+                girl.Say(speech[i]);
             else
                 DialogueSystem.instance.Close();
-
             i++;
         }
 
+
+
+
+        // Moving test
         if (Input.GetKey(KeyCode.M))
         {
-            newOC.MoveTo(moveTarget, moveSpeed, smooth);
+            girl.MoveTo(moveTarget, moveSpeed, smooth);
         }
+
+        // Imitiate movement
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            girl.StopMoving(true);
+        }
+
+        //Expression and such.
+        // Moving test
+        if (Input.GetKey(KeyCode.B))
+        {
+            girl.SetBody(bodyIndex);
+        }
+
+        // Imitiate movement
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            girl.SetExpression(expressionIndex);
+        }
+
+
+
+
     }
 }

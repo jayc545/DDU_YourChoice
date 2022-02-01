@@ -10,6 +10,8 @@ public class Character
     // Root container for all the images related to the character in the scenne.
     [HideInInspector] public RectTransform root;
 
+    public bool isMultiLayerCharacter { get { return renderers.renderer == null; } }
+
     public bool enabled { get { return root.gameObject.activeInHierarchy; } set { root.gameObject.SetActive(value); } }
 
     // the space between the anchors.
@@ -38,6 +40,13 @@ public class Character
     Vector2 targetPosition;
     Coroutine moving;
     bool isMoving { get { return moving != null; } }
+
+    /// <summary>
+    /// Move to a specific point relative to the canvas space. (1,1) = far top right.
+    /// </summary>
+    /// <param name="Target"></param>
+    /// <param name="speed"></param>
+    /// <param name="smooth"></param>
     public void MoveTo(Vector2 Target, float speed, bool smooth = true)
     {
         // if we are moving, stop moving
@@ -46,14 +55,45 @@ public class Character
         moving = CharacterManager.instance.StartCoroutine(Moving(Target, speed, smooth));
     }
 
-    public void StopMoving()
+
+
+    /// <summary>
+    /// Stops the character in the it's trach, either setting it immediatly at the target position or not.
+    /// </summary>
+    /// <param name="arriveAtTargetPositionImmediatly"></param>
+    public void StopMoving(bool arriveAtTargetPositionImmediatly = false)
     {
         if (isMoving)
         {
             CharacterManager.instance.StopCoroutine (moving);
+            if (arriveAtTargetPositionImmediatly)
+                SetPosition(targetPosition);
         }
         moving = null;
     }
+
+/// <summary>
+///  Immediatly set the position of this character to the intended target.
+/// </summary>
+/// <param name="target"></param>
+    public void SetPosition(Vector2 target)
+    {
+        Vector2 padding = anchorPadding;
+        float maxX = 1f - padding.x;
+        float maxY = 1f - padding.y;
+        Vector2 minAnchorTarget = new Vector2(maxX * targetPosition.x, maxY * targetPosition.y);
+        root.anchorMin = minAnchorTarget;
+        root.anchorMax = root.anchorMin + padding;
+
+    }
+
+    /// <summary>
+    /// Moves gradually the character towards a position using coroutine.
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="speed"></param>
+    /// <param name="smooth"></param>
+    /// <returns></returns>
 
     IEnumerator Moving(Vector2 target, float speed, bool smooth)
     {
@@ -69,13 +109,43 @@ public class Character
 
         while(root.anchorMin != minAnchorTarget)
         {
-            root.anchorMin = (!smooth) ? Vector2.MoveTowards(root.anchorMin, minAnchorTarget, speed) : Vector2.Lerp(root.anchorMin, minAnchorTarget, speed);
+            root.anchorMin = (!smooth) ? Vector2.MoveTowards (root.anchorMin, minAnchorTarget, speed) : Vector2.Lerp (root.anchorMin, minAnchorTarget, speed);
             root.anchorMax = root.anchorMin + padding;
             yield return new WaitForEndOfFrame();
         }
 
         StopMoving();
     }
+
+    // Begin Transitioning Images //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public Sprite GetSprite(int index = 0)
+    {
+        Sprite[] sprites = Resources.LoadAll<Sprite>("Images/Characters/" + characterName);
+        return sprites[index];
+    }
+
+    public void SetBody (int index)
+    {
+        renderers.bodyRenderer.sprite = GetSprite(index);
+    }
+
+    public void SetBody (Sprite sprite)
+    {
+        renderers.bodyRenderer.sprite = sprite;
+    }
+
+    public void SetExpression (int index)
+    {
+        renderers.expressionRenderer.sprite = GetSprite(index);
+    }
+
+    public void SetExpression(Sprite sprite)
+    {
+        renderers.expressionRenderer.sprite = sprite;
+    }
+
+    // End Transitioning images ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //Create a new character
     public Character (string _name, bool enableOnStart = true)
@@ -86,21 +156,36 @@ public class Character
         //Spawning the instance.
         GameObject ob = GameObject.Instantiate(prefab, cm.characterPanel);
 
-        root = ob.GetComponent<RectTransform>();
+        root = ob.GetComponent<RectTransform> ();
         characterName = _name;
+
+
+            renderers.bodyRenderer = ob.transform.Find("bodyLayer").GetComponent<Image> ();
+            renderers.expressionRenderer = ob.transform.Find("expressionLayer").GetComponent<Image> ();
+
+
 
 
         dialogue = DialogueSystem.instance;
 
         enabled = enableOnStart;
+
+        renderers.renderer = ob.GetComponentInChildren<RawImage>();
     }
 
-    
-    class Renderers
+     [System.Serializable]
+    public class Renderers
     {
-               //Sprites used images.
-        public Image bodyRenderer1;
-        public Image bodyRenderer2;
-        public Image Head;
+        // Uses as the only image for a single layer character
+        public RawImage renderer;
+
+        // For the body of the multilayer character.
+        public Image bodyRenderer;
+
+        // the expression for the renderer of the multilayer character.
+        public Image expressionRenderer;
+
     }
+
+    public Renderers renderers = new Renderers();
 }

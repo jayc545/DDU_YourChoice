@@ -8,8 +8,11 @@ public class CharacterManager : MonoBehaviour
 {
     public static CharacterManager instance;
 
+    // All characters must be attached to the character panel.
     public RectTransform characterPanel;
 
+
+    //A list of all characters currently in our scene.
     public List<Character> characters = new List<Character>();
 
     // Lookup for our Character.
@@ -47,4 +50,14 @@ public class CharacterManager : MonoBehaviour
         return newCharacter;
     }
 
+    /*
+    public class CHARACTERPOSITIONS
+    {
+        public Vector2 bottomLeft = new Vector2(0, 0);
+        public Vector2 tipRight = new Vector2(1f, 1f);
+        public Vector2 center = new Vector2(0.5f, 0.5f);
+        public Vector2 bottemRight = new Vector2(1f, 0);
+        public Vector2 topLeft = new Vector2(0, 1f);
+    }
+    */
 }
